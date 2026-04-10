@@ -1,0 +1,5 @@
+{
+  "name": "Blueprint SA",
+  "description": "A hardware project accelerator for the South African market. Generate BOMs, wiring diagrams, and instructions from natural language prompts.",
+  "requestFramePermissions": []
+}

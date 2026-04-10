@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-black text-white antialiased;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-zinc-950;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-800 rounded-full hover:bg-zinc-700 transition-colors;
+  }
+
+  /* React Flow Overrides */
+  .react-flow__node {
+    @apply !bg-zinc-900 !border !border-zinc-700 !text-white !rounded-md !px-4 !py-2 !text-[10px] !font-bold !uppercase !tracking-wider !shadow-xl;
+  }
+  .react-flow__edge-path {
+    @apply !stroke-zinc-700;
+  }
+  .react-flow__edge.animated .react-flow__edge-path {
+    @apply !stroke-white;
+  }
+  .react-flow__handle {
+    @apply !bg-zinc-500 !border-zinc-900;
+  }
+}
+
+/* Prose overrides for markdown */
+.prose h1, .prose h2, .prose h3 {
+  @apply uppercase tracking-tighter font-bold;
+}
+.prose code {
+  @apply bg-zinc-900 px-1.5 py-0.5 rounded text-zinc-300 font-mono text-xs;
+}
+.prose pre {
+  @apply bg-zinc-900 border border-zinc-800 rounded-xl p-4;
+}

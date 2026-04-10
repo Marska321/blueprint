@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: projects
+    // Document ID: projectId (UUID)
+    // Fields:
+    //   - id: string (required) - Unique project ID
+    //   - userId: string (required) - Owner's UID
+    //   - name: string (required) - Project name
+    //   - description: string (required) - Project description
+    //   - prompt: string (required) - Original prompt
+    //   - components: list (required) - List of components
+    //   - wiring: map (required) - ReactFlow nodes and edges
+    //   - instructions: string (required) - Markdown instructions
+    //   - createdAt: number (required) - Timestamp
+    //   - totalCostZAR: number (required) - Total cost in ZAR
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidProject(data) {
+      return data.keys().hasAll(['id', 'userId', 'name', 'description', 'prompt', 'components', 'wiring', 'instructions', 'createdAt', 'totalCostZAR']) &&
+             data.id is string &&
+             data.userId is string &&
+             data.name is string && data.name.size() < 200 &&
+             data.description is string && data.description.size() < 2000 &&
+             data.prompt is string && data.prompt.size() < 1000 &&
+             data.components is list &&
+             data.wiring is map &&
+             data.instructions is string && data.instructions.size() < 10000 &&
+             data.createdAt is number &&
+             data.totalCostZAR is number;
+    }
+
+    match /projects/{projectId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if isAuthenticated() && isValidProject(request.resource.data) && request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && isOwner(resource.data.userId) && isValidProject(request.resource.data) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isAuthenticated() && isOwner(resource.data.userId);
+    }
+    
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}
